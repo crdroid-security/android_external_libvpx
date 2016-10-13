@@ -6,11 +6,7 @@ ifneq ($(ARCH_HAS_BIGENDIAN),true)
   ifeq ($(ARCH_MIPS_DSP_REV),2)
     libvpx_target := config/mips32-dspr2
   else
-    ifeq ($(ARCH_MIPS_HAS_MSA),true)
-      libvpx_target := config/mips32-msa
-    else
-      libvpx_target := config/mips32
-    endif
+    libvpx_target := config/mips32
   endif
 else
   libvpx_target := config/generic

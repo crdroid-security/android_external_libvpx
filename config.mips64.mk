@@ -3,11 +3,7 @@
 # libvpx_codec_srcs_c_mips64
 
 ifneq ($(ARCH_HAS_BIGENDIAN),true)
-  ifeq ($(ARCH_MIPS_HAS_MSA),true)
-    libvpx_target := config/mips64-msa
-  else
-    libvpx_target := config/mips64
-  endif
+  libvpx_target := config/mips64
 else
   libvpx_target := config/generic
 endif
