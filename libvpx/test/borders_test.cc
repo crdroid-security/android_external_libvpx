@@ -21,6 +21,7 @@ class BordersTest : public ::libvpx_test::EncoderTest,
     public ::libvpx_test::CodecTestWithParam<libvpx_test::TestMode> {
  protected:
   BordersTest() : EncoderTest(GET_PARAM(0)) {}
+  virtual ~BordersTest() {}
 
   virtual void SetUp() {
     InitializeConfig();
@@ -78,5 +79,8 @@ TEST_P(BordersTest, TestLowBitrate) {
 }
 
 VP9_INSTANTIATE_TEST_CASE(BordersTest, ::testing::Values(
+    ::libvpx_test::kTwoPassGood));
+
+VP10_INSTANTIATE_TEST_CASE(BordersTest, ::testing::Values(
     ::libvpx_test::kTwoPassGood));
 }  // namespace
