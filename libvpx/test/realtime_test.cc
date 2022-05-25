@@ -81,20 +81,15 @@ TEST_P(RealtimeTest, RealtimeFirstPassProducesFrames) {
   EXPECT_EQ(kFramesToEncode, frame_packets_);
 }
 
-TEST_P(RealtimeTest, IntegerOverflow) {
-  if (IsVP9()) {
-    // TODO(https://crbug.com/webm/1749): This should match VP8.
-    TestIntegerOverflow(800, 480);
-  } else {
-    TestIntegerOverflow(2048, 2048);
-  }
-}
+TEST_P(RealtimeTest, IntegerOverflow) { TestIntegerOverflow(2048, 2048); }
 
 TEST_P(RealtimeTest, IntegerOverflowLarge) {
   if (IsVP9()) {
-    GTEST_SKIP() << "TODO(https://crbug.com/webm/1750): Enable this test after "
-                    "undefined sanitizer warnings are fixed.";
-    // TestIntegerOverflow(16384, 16384);
+#if VPX_ARCH_X86_64
+    TestIntegerOverflow(16384, 16384);
+#else
+    TestIntegerOverflow(4096, 4096);
+#endif
   } else {
     GTEST_SKIP()
         << "TODO(https://crbug.com/webm/1748,https://crbug.com/webm/1751):"
