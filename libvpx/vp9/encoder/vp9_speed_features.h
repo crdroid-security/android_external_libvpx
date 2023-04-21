@@ -210,6 +210,10 @@ typedef struct MV_SPEED_FEATURES {
 
   // This variable sets the step_param used in full pel motion search.
   int fullpel_search_step_param;
+
+  // Whether to downsample the rows in sad calculation during motion search.
+  // This is only active when there are at least 8 rows.
+  int use_downsampled_sad;
 } MV_SPEED_FEATURES;
 
 typedef struct PARTITION_SEARCH_BREAKOUT_THR {
@@ -245,6 +249,24 @@ typedef enum {
   USE_8_TAPS,
   USE_8_TAPS_SHARP,
 } SUBPEL_SEARCH_TYPE;
+
+typedef enum {
+  // Disable trellis coefficient optimization
+  DISABLE_TRELLIS_OPT,
+  // Enable trellis coefficient optimization
+  ENABLE_TRELLIS_OPT,
+  // Enable trellis coefficient optimization based on source variance of the
+  // prediction block during transform RD
+  ENABLE_TRELLIS_OPT_TX_RD_SRC_VAR,
+  // Enable trellis coefficient optimization based on residual mse of the
+  // transform block during transform RD
+  ENABLE_TRELLIS_OPT_TX_RD_RESIDUAL_MSE,
+} ENABLE_TRELLIS_OPT_METHOD;
+
+typedef struct TRELLIS_OPT_CONTROL {
+  ENABLE_TRELLIS_OPT_METHOD method;
+  double thresh;
+} TRELLIS_OPT_CONTROL;
 
 typedef struct SPEED_FEATURES {
   MV_SPEED_FEATURES mv;
@@ -292,8 +314,8 @@ typedef struct SPEED_FEATURES {
   int coeff_prob_appx_step;
 
   // Enable uniform quantizer followed by trellis coefficient optimization
-  int allow_quant_coeff_opt;
-  double quant_opt_thresh;
+  // during transform RD
+  TRELLIS_OPT_CONTROL trellis_opt_tx_rd;
 
   // Enable asymptotic closed-loop encoding decision for key frame and
   // alternate reference frames.
@@ -399,8 +421,20 @@ typedef struct SPEED_FEATURES {
   // Adaptive prediction mode search
   int adaptive_mode_search;
 
-  // Chessboard pattern prediction filter type search
+  // Prune NEAREST and ZEROMV single reference modes based on motion vector
+  // difference and mode rate
+  int prune_single_mode_based_on_mv_diff_mode_rate;
+
+  // Chessboard pattern prediction for interp filter. Aggressiveness increases
+  // with levels.
+  // 0: disable
+  // 1: cb pattern in eval when filter is not switchable
+  // 2: cb pattern prediction for filter search
   int cb_pred_filter_search;
+
+  // This variable enables an early termination of interpolation filter eval
+  // based on the current rd cost after processing each plane
+  int early_term_interp_search_plane_rd;
 
   int cb_partition_search;
 
